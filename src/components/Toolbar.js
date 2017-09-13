@@ -1,33 +1,16 @@
-import React, {Component, PropTypes} from "react";
-import ComposeMessage from './ComposeMessage';
+import React, {Component} from "react";
 
 
 class Toolbar extends Component {
-    // static propTypes = {
-    //     onReadButtonClick: PropTypes.func,
-    //     onUnReadButtonClick: PropTypes.func,
-    //     onAddLabelClick: PropTypes.func,
-    //     onRemoveLabelClick: PropTypes.func,
-    //     onSelectAllClick: PropTypes.func,
-    //     onLabelAdded: PropTypes.func,
-    //     removeLabelClick: PropTypes.func,
-    //     onTrashClick: PropTypes.func,
-    //     selectAllSelected:PropTypes.string
-    // }
-    //
-    // constructor(props){
-    //     super(props)
-    // }
 
     render() {
-        console.log("888=" + this.props.selectAllSelected)
         return (
             <div className="row toolbar">
                 <div className="col-md-12">
 
                     <p className="pull-right">
                         <span className="badge badge">{this.props.numUnreadMessages}</span>
-                        {this.props.numUnreadMessages == 1 ? "unread message" : "unread messages"}
+                        {this.props.numUnreadMessages === 1 ? "unread message" : "unread messages"}
                     </p>
 
                     <a className="btn btn-danger" onClick={this.props.onComposeMessageClick}>
@@ -35,7 +18,7 @@ class Toolbar extends Component {
                     </a>
 
                     <button className="btn btn-default" onClick={this.props.onSelectAllClick}>
-                        <i className={this.props.selectAllSelected}></i>
+                        <i className={this.props.selectAllStyle}></i>
                     </button>
 
                     <button className="btn btn-default" onClick={this.props.onReadButtonClick}>

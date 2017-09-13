@@ -1,16 +1,7 @@
-import React, {Component,PropTypes}  from 'react';
+import React, {Component}  from 'react';
 import Message from './Message';
 
 class Messages extends Component {
-    // static propTypes = {
-    //     messages: PropTypes.array,
-    //     checkboxChecked: PropTypes.func,
-    //     starChecked: PropTypes.func
-    // }
-    // constructor(props) {
-    //     super(props);
-    // }
-
     render() {
         return (
             <div>
