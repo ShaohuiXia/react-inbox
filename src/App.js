@@ -5,30 +5,13 @@ import Messages from './components/Messages';
 import ComposeMessage from './components/ComposeMessage';
 
 class App extends Component {
-
-    state = {
-        messages: [],
-        composeMessageOpen: false,
-        subject: '',
-        body: ''
-    };
-
     constructor(props) {
         super(props);
         this.state = {  messages: [],
-                        localMessage: [],
+                        composeMessageOpen: false,
                         subject: '',
                         body: ''
         };
-        this.readButtonClick = this.readButtonClick.bind(this);
-        this.onTrashClick = this.onTrashClick.bind(this);
-        this.selectAllClick = this.selectAllClick.bind(this);
-        this.starChecked = this.starChecked.bind(this);
-        this.checkboxChecked = this.checkboxChecked.bind(this);
-        this.onLabelAdded = this.onLabelAdded.bind(this);
-        this.unReadButtonClick = this.unReadButtonClick.bind(this);
-        this.removeLabelClick = this.removeLabelClick.bind(this);
-        this.sendMessage = this.sendMessage.bind(this);
     }
 
     async componentDidMount() {
@@ -37,7 +20,7 @@ class App extends Component {
         this.setState({messages: json._embedded.messages})
     }
 
-    async readButtonClick() {
+    readButtonClick = async () => {
         const readList = this.state.messages.map((message) => { 
             return message.selected ? {...message, read: true} : message 
         });  
@@ -58,7 +41,7 @@ class App extends Component {
         this.setState({messages:readList})
     }
 
-    async unReadButtonClick(){
+    unReadButtonClick = async () => {
         const unReadList = this.state.messages.map((message, i) => {
             return message.selected ? {...message, read: false} : message
         });
@@ -79,7 +62,7 @@ class App extends Component {
         this.setState({messages:unReadList})
     }
 
-    async removeLabelClick(e){
+    removeLabelClick = async (e) => {
         const selectedValue = e.target.value;
         const newLabelList = this.state.messages.map(message => {
             const index = message.labels.indexOf(selectedValue);
@@ -89,6 +72,8 @@ class App extends Component {
             }
             return message
         });
+
+        e.target.selectedIndex = 0;
 
         const response = await fetch(`${process.env.REACT_APP_API_URL}/api/messages`, {
             method: 'PATCH',
@@ -129,7 +114,7 @@ class App extends Component {
 
 
 
-    async starChecked (id) {
+   starChecked = async (id) => {
         const selectedMessage = this.state.messages.filter(message => {
             return message.id == id
         });
@@ -158,13 +143,12 @@ class App extends Component {
     });
 
        selectedMessage[0].selected = !selectedMessage[0].selected;
-       this.setState({messages: this.state.messages})
+       this.setState({messages: this.state.messages
+       })
     };
 
-    async onLabelAdded(e) {
+   onLabelAdded = async (e) => {
         const selectedLabel = e.target.value; 
-        if( !e.target.selectedIndex) 
-            return;  
 
         const labelList = this.state.messages.map((message) => { 
                 message.selected &&  !message.labels.includes(selectedLabel) 
@@ -172,6 +156,7 @@ class App extends Component {
                 : '';  
             return message 
         });  
+        e.target.selectedIndex = 0;
 
         const response = await fetch(`${process.env.REACT_APP_API_URL}/api/messages`, {
             method: 'PATCH',
@@ -186,10 +171,11 @@ class App extends Component {
             }
         });
 
+
         this.setState({messages:labelList})
     }
 
-    async onTrashClick() {
+    onTrashClick = async () => {
         const anySelected = this.state.messages.filter(message => { return !message.selected });
 
         const response = await fetch(`${process.env.REACT_APP_API_URL}/api/messages`, {
@@ -204,7 +190,8 @@ class App extends Component {
             }
         });
 
-        this.setState({messages: anySelected})
+        this.setState({messages: anySelected
+        })
     }
 
     calculateUnreadMessages = () => {
@@ -238,7 +225,9 @@ class App extends Component {
       this.setState({ composeMessageOpen: !this.state.composeMessageOpen })
     };
 
-    async sendMessage() {
+   sendMessage = async (e) => {
+        e.preventDefault();
+
         const response = await fetch(`${process.env.REACT_APP_API_URL}/api/messages`, {
             method: 'POST',
             body: JSON.stringify({
@@ -249,6 +238,12 @@ class App extends Component {
                 'Content-Type': 'application/json',
                 'Accept': 'application/json',
             }
+        })
+
+        const newMessage = await response.json()
+
+        this.setState({messages: this.state.messages.concat(newMessage),
+            composeMessageOpen: false
         })
     }
 
@@ -275,6 +270,7 @@ class App extends Component {
               onTrashClick={this.onTrashClick}
               numUnreadMessages={this.calculateUnreadMessages()}
               onComposeMessageClick= {this.composeMessageClick}
+              messages={this.state.messages}
           />
           { this.state.composeMessageOpen && <ComposeMessage sendMessage={this.sendMessage}
                                                              handleSubjectInputChange={this.handleSubjectInputChange}
